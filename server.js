@@ -40,9 +40,6 @@ console.log('port', PORT);
 
 var db = pgp(connectionString);
 
-server.listen(PORT, function(){
-  console.log('Server Listening on Port:' + PORT);
-})
 
   var respondWithData = function(res, message) {
     return function(data) {
@@ -70,4 +67,9 @@ server.listen(PORT, function(){
     .then(respondWithData(res, "Task Data"))
     .catch(catchError)
   });
+
+
+  server.listen(PORT, function(){
+  console.log('Server Listening on Port:' + PORT);
+})
 
