@@ -63,9 +63,10 @@ var db = pgp(connectionString);
 
 
   app.get('/api/tasks', function(req, res) {
-    db.any('select * from tasks')
-    .then(respondWithData(res, "Task Data"))
-    .catch(catchError)
+    res.sendStatus(200);
+    // db.any('select * from tasks')
+    // .then(respondWithData(res, "Task Data"))
+    // .catch(catchError)
   });
 
 
