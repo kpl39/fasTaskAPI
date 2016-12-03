@@ -30,7 +30,7 @@ app.use(express.static(__dirname));
 
 
 if (process.env.DATABASE_URL) {
-  connectionString = process.env.DATABASE_URL;
+  connectionString = process.env.DATABASE_URL + ?ssl=true;
 } else {
   connectionString = 'postgres://localhost:5432/fastask'
 }
