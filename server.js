@@ -43,7 +43,7 @@ var db = pgp(connectionString);
 
   var respondWithData = function(res, message) {
     return function(data) {
-      res.status(200)
+      res.sendStatus(200)
       .json({
         status: 'success',
         data: data,
@@ -62,11 +62,11 @@ var db = pgp(connectionString);
 
 
 
-  app.get('/api/tasks', function(req, res) {
-    res.sendStatus(200);
-    // db.any('select * from tasks')
-    // .then(respondWithData(res, "Task Data"))
-    // .catch(catchError)
+  app.get('/api/tasks', function(req, res, next) {
+    // res.sendStatus(200);
+    db.any('select * from tasks')
+    .then(respondWithData(res, "Task Data"))
+    .catch(catchError)
   });
 
 
