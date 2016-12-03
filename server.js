@@ -54,7 +54,6 @@ server.listen(PORT, function(){
 
 
   app.get('/api/tasks/', function(req, res) {
-    console.log('function called in server');
     db.any('select * from tasks')
     .then(respondWithData(res, "Task Data"))
     .catch(catchError)
