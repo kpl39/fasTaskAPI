@@ -26,14 +26,16 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 
-console.log("database URL", process.env.DATABASE_URL);
-console.log('port', process.env.PORT);
+
 
 if (process.env.DATABASE_URL) {
   connectionString = process.env.DATABASE_URL;
 } else {
   connectionString = 'postgres://localhost:5432/fastask'
 }
+
+console.log("database URL", connectionString);
+console.log('port', PORT);
 
 
 var db = pgp(connectionString);
