@@ -2,6 +2,7 @@ var express = require('express');
 var http = require('http');
 var bodyParser = require('body-parser');
 var promise = require('bluebird');
+var pg = require('pg');
 
 var PORT;
 
@@ -20,11 +21,11 @@ var server = http.createServer(app);
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-var options = {
-  promiseLib: promise
-};
+// var options = {
+//   promiseLib: promise
+// };
 
-var pgp = require('pg-promise')(options);
+// var pgp = require('pg-promise')(options);
 
 
 
@@ -38,29 +39,48 @@ console.log("database URL", connectionString);
 console.log('port', PORT);
 
 
-var db = pgp(connectionString);
 
 
-  var respondWithData = function(res, message) {
-    // console.log('**RESPOND WITH DATA**', message, res)
-    return function(data) {
-      console.log('DATA', data);
-      res.status(200)
-      .json({
-        status: 'success',
-        data: data,
-        message: message
-      });
-    }
-  };
+
+app.get('/db', function (request, response) {
+  pg.connect(connectionString, function(err, client, done) {
+    client.query('SELECT * FROM tasks', function(err, result) {
+      done();
+      if (err)
+       { console.error(err); response.send("Error " + err); }
+      else
+       // { response.render('pages/db', {results: result.rows} ); }
+        { response.send(result) }
+    });
+  });
+});
 
 
-  var catchError = function(next) {
-    return function(err){
-      console.log(err);
-      return next(err);
-    };
-  };
+
+
+// var db = pgp(connectionString);
+
+
+  // var respondWithData = function(res, message) {
+  //   // console.log('**RESPOND WITH DATA**', message, res)
+  //   return function(data) {
+  //     console.log('DATA', data);
+  //     res.status(200)
+  //     .json({
+  //       status: 'success',
+  //       data: data,
+  //       message: message
+  //     });
+  //   }
+  // };
+
+
+  // var catchError = function(next) {
+  //   return function(err){
+  //     console.log(err);
+  //     return next(err);
+  //   };
+  // };
 
 
 
