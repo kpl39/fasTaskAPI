@@ -43,7 +43,7 @@ var db = pgp(connectionString);
 
   var respondWithData = function(res, message) {
     return function(data) {
-      res.sendStatus(200)
+      res.status(200)
       .json({
         status: 'success',
         data: data,
@@ -63,7 +63,7 @@ var db = pgp(connectionString);
 
 
   app.get('/api/tasks', function(req, res, next) {
-    // res.sendStatus(200);
+    console.log('ROUTE CALLED;')
     db.any('select * from tasks')
     .then(respondWithData(res, "Task Data"))
     .catch(catchError)
