@@ -42,7 +42,7 @@ var db = pgp(connectionString);
 
 
   var respondWithData = function(res, message) {
-    console.log('**RESPOND WITH DATA**', message, res)
+    // console.log('**RESPOND WITH DATA**', message, res)
     return function(data) {
       res.status(200)
       .json({
@@ -56,7 +56,7 @@ var db = pgp(connectionString);
 
   var catchError = function(next) {
     return function(err){
-      console.log('HERES THE ERROR', err);
+      console.log(err);
       return next(err);
     };
   };
