@@ -26,7 +26,14 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 
-var db = pgp('postgres://localhost:5432/fastask');
+if (process.env.DATABASE_URL) {
+  connectionString = process.env.DATABASE_URL;
+} else {
+  connectionString = 'postgres://localhost:5432/fastask'
+}
+
+
+var db = pgp(connectionString);
 
 server.listen(PORT, function(){
   console.log('Server Listening on Port:' + PORT);
