@@ -55,9 +55,8 @@ var db = pgp(connectionString);
 
 
   var catchError = function(next) {
-    console.log("**CATCH ERROR**")
     return function(err){
-      console.log(err);
+      console.log('HERES THE ERROR', err);
       return next(err);
     };
   };
