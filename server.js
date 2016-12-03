@@ -44,6 +44,7 @@ var db = pgp(connectionString);
   var respondWithData = function(res, message) {
     // console.log('**RESPOND WITH DATA**', message, res)
     return function(data) {
+      console.log('DATA', data);
       res.status(200)
       .json({
         status: 'success',
