@@ -44,6 +44,7 @@ console.log('port', PORT);
 
 app.get('/db', function (request, response) {
   pg.connect(connectionString, function(err, client, done) {
+    console.log('client', client)
     client.query('SELECT * FROM tasks', function(err, result) {
       done();
       if (err)
