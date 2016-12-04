@@ -75,6 +75,16 @@ var db = pgp(connectionString);
     }
   };
 
+  var postData = function(res, message) {
+    return function() {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: message
+        });
+    }
+  };
+
 
   var catchError = function(next) {
     return function(err){
@@ -91,6 +101,37 @@ var db = pgp(connectionString);
     .then(respondWithData(res, "Task Data"))
     .catch(catchError)
   });
+
+  // app.post('api/tasks', function(req, res, next) {
+
+
+  // })
+
+
+  app.get('/api/users', function(req, res, next) {
+    console.log('ROUTE CALLED;')
+    db.any('select * from users')
+    .then(respondWithData(res, "User Data"))
+    .catch(catchError)
+  });
+
+
+  app.get('/api/username/:id', function(req, res, next) {
+    var userId = parseInt(req.params.id);
+    console.log(req.params.id);
+    db.one('select exists(select 1 from users where userid = $1)', [userId])
+      .then(respondWithData(res, "checked"))
+      .catch(catchError)
+  });
+
+
+  app.post('/api/adduser', function(req, res, next){
+    var userInfo = req.body;
+    console.log("Add user request body", req.body)
+    db.none('INSERT INTO users(userid, email) values(${userId}, ${email})', req.body)
+      .then(postData(res, 'posted data'))
+      .catch(catchError)
+  })
 
 
   server.listen(PORT, function(){
