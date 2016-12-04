@@ -2,10 +2,12 @@ var express = require('express');
 var http = require('http');
 var bodyParser = require('body-parser');
 var promise = require('bluebird');
-// var pg = require('pg');
+var AWS = require('aws-sdk');
+var fs = require('fs');
 
 var PORT;
 
+// AWS.config.loadFromPath('config.json');
 
 
 if (process.env.PORT) {
@@ -37,6 +39,8 @@ if (process.env.DATABASE_URL) {
 
 console.log("database URL", connectionString);
 console.log('port', PORT);
+
+
 
 
 
@@ -134,7 +138,43 @@ var db = pgp(connectionString);
   })
 
 
+  app.post('/api/uploadpicture', function(req, res, next) {
+    console.log('upload picture', req.body);
+    var img = req.body;
+    var s3 = new AWS.S3();
+
+
+    var bucketName = 'fastask';
+    var keyName = img.name + '.png';
+    var bodyName = img.image;
+    // var bodyName = fs.createReadStream('fastask.png');
+
+
+    var params = {Bucket: bucketName, Key: keyName, Body: bodyName, ACL: 'public-read'};
+
+    s3.putObject(params, function(err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Successfully uploaded data to " + bucketName + "/" + keyName);
+      };
+    });
+
+    var urlParams = {Bucket: bucketName, Key: keyName};
+    s3.getSignedUrl('getObject', urlParams, function(err, url) {
+      console.log('the url of the image is', url);
+      respondWithData(res, url))
+    });
+
+
+
+
+
+  })
+
+
+
   server.listen(PORT, function(){
-  console.log('Server Listening on Port:' + PORT);
-})
+    console.log('Server Listening on Port:' + PORT);
+  })
 
