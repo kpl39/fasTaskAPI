@@ -139,18 +139,27 @@ var db = pgp(connectionString);
 
 
   app.post('/api/uploadpicture', function(req, res, next) {
-    console.log('upload picture', req.body);
     var img = req.body;
+
+    var buf = new Buffer(img.image.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    console.log('upload picture', req.body);
+
     var s3 = new AWS.S3();
 
 
+
     var bucketName = 'fastask';
-    var keyName = img.name + '.jpg';
-    var bodyName = img.image;
+    var keyName = img.name;
+    // var bodyName = img.image;
     // var bodyName = fs.createReadStream('fastask.png');
 
 
-    var params = {Bucket: bucketName, Key: keyName, Body: bodyName, ACL: 'public-read'};
+    var params = {Bucket: bucketName,
+                  Key: keyName,
+                  Body: buf,
+                  ContentEncoding: 'base64',
+                  ContentType: 'image/jpeg',
+                  ACL: 'public-read'};
 
     s3.putObject(params, function(err, data) {
       if (err) {
