@@ -145,7 +145,7 @@ var db = pgp(connectionString);
 
 
     var bucketName = 'fastask';
-    var keyName = img.name + '.png';
+    var keyName = img.name + '.jpg';
     var bodyName = img.image;
     // var bodyName = fs.createReadStream('fastask.png');
 
