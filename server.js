@@ -7,7 +7,7 @@ var fs = require('fs');
 
 var PORT;
 
-// AWS.config.loadFromPath('config.json');
+AWS.config.loadFromPath('config.json');
 
 
 if (process.env.PORT) {
@@ -137,25 +137,36 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
+  app.get('/api/getprofile/:email', function(req, res, next) {
+    var email = req.params.email;
+    console.log('email', email);
+    db.one('SELECT * FROM users WHERE email = $1', [email])
+      .then(respondWithData(res, "profile data"))
+      .catch(catchError)
+  })
+
 
   app.post('/api/uploadpicture', function(req, res, next) {
+
     var img = req.body;
 
     var buf = new Buffer(img.image.replace(/^data:image\/\w+;base64,/, ""),'base64')
-    console.log('upload picture', req.body);
+    // console.log('upload picture', req.body);
 
     var s3 = new AWS.S3();
 
 
-
+    console.log("img:", img)
     var bucketName = 'fastask';
     var keyName = img.name;
+    var folder = img.folder;
+    var email = img.email;
     // var bodyName = img.image;
     // var bodyName = fs.createReadStream('fastask.png');
 
 
     var params = {Bucket: bucketName,
-                  Key: keyName,
+                  Key: folder + '/' + keyName,
                   Body: buf,
                   ContentEncoding: 'base64',
                   ContentType: 'image/jpeg',
@@ -165,18 +176,20 @@ var db = pgp(connectionString);
       if (err) {
         console.log(err);
       } else {
-        console.log("Successfully uploaded data to " + bucketName + "/" + keyName);
+        console.log("Successfully uploaded data to " + bucketName + "/" + folder + "/" + keyName);
       };
     });
 
     var urlParams = {Bucket: bucketName, Key: keyName};
     s3.getSignedUrl('getObject', urlParams, function(err, url) {
-      console.log('the url of the image is', url);
-      respondWithData(res, url);
+      res.status(200).send(url)
     });
 
-
-
+    var profileUrl = 'https://' + bucketName + '.s3.amazonaws.com/' +  folder + "/" + keyName;
+    console.log('email:', email)
+    db.none('UPDATE users SET profileurl = coalesce($1, profileurl) WHERE email=$2', [profileUrl, email])
+      .then(postData(res, 'updated profile'))
+      .catch(catchError)
 
 
   })
