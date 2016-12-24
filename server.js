@@ -106,6 +106,76 @@ var db = pgp(connectionString);
     .catch(catchError)
   });
 
+
+  app.get('/api/taskdetail/:id', function(req, res, next) {
+    var taskID = parseInt(req.params.id);
+    console.log('TASK ID = ', taskID);
+    db.one('SELECT * FROM tasks WHERE id = $1', [taskID])
+      .then(respondWithData(res, "task detail"))
+      .catch(catchError)
+  })
+
+
+  app.get('/api/posts/:taskid', function(req, res, next) {
+    var taskID = parseInt(req.params.taskid);
+    console.log('GET POSTS TASK ID = ', taskID);
+    db.any('SELECT * FROM posts WHERE taskid = $1', [taskID])
+      .then(respondWithData(res, "posts data"))
+      .catch(catchError)
+  })
+
+  app.get('/api/postdetail/:postid', function(req, res, next) {
+    var postID = parseInt(req.params.postid);
+    console.log('GET POST DETAIL', postID);
+    db.one('SELECT * FROM posts where id = $1', [postID])
+      .then(respondWithData(res, 'post detail data'))
+      .catch(catchError)
+  })
+
+  app.get('/api/comments/:postid', function(req, res, next) {
+    var postID = parseInt(req.params.postid);
+    console.log('GET POST DETAIL', postID);
+    db.any('SELECT * FROM comments where postid = $1', [postID])
+      .then(respondWithData(res, 'comments data'))
+      .catch(catchError)
+  })
+
+  app.post('/api/addcomment', function(req, res, next) {
+    var pkg = req.body;
+    console.log("PACKAGE from Server", pkg);
+    db.none('INSERT INTO comments(POSTID, USERID, USERNAME, COMMENT, AVATARURL) VALUES(${postid}, ${userid}, ${username}, ${comment}, ${profileurl})', pkg)
+      .then(postData(res, 'added comment'))
+      .catch(catchError)
+  })
+
+  app.delete('/api/deletecomment/:id', function(req, res, next) {
+    var commentId = parseInt(req.params.id);
+    console.log("id from delete comment", commentId);
+
+    db.none('DELETE FROM comments WHERE id = $1', [commentId])
+      .then(postData(res, 'deleted comment'))
+      .catch(catchError)
+  })
+
+  app.post('/api/addtask', function(req, res, next) {
+    var pkg = req.body;
+
+    db.none('INSERT INTO tasks(USERID, TITLE, DESCRIPTION, IMAGEURL, ACTIVE, STARTTIME, PRIZE, ENTRYDATE) VALUES($1, $2, $3, $4, $5, $6, $7, $8)', [pkg.userid, pkg.title, pkg.description, pkg.imageurl, pkg.active, pkg.fulldate, pkg.prize, pkg.currenttime])
+      .then(postData(res, 'added task'))
+      .catch(catchError)
+  })
+
+
+
+  // app.get('/api/useravatar/:userid', function(req, res, next) {
+  //   var userID = parseInt(req.params.userid);
+  //   console.log('GET  USER AVATAR', userID);
+  //   db.one('SELECT users.profileurl from users where id = $1', [userID])
+  //     .then(respondWithData(res, 'user avatar'))
+  //     .catch(catchError)
+  // })
+
+
   // app.post('api/tasks', function(req, res, next) {
 
 
@@ -115,8 +185,8 @@ var db = pgp(connectionString);
   app.get('/api/users', function(req, res, next) {
     console.log('ROUTE CALLED;')
     db.any('select * from users')
-    .then(respondWithData(res, "User Data"))
-    .catch(catchError)
+      .then(respondWithData(res, "User Data"))
+      .catch(catchError)
   });
 
 
@@ -199,4 +269,12 @@ var db = pgp(connectionString);
   server.listen(PORT, function(){
     console.log('Server Listening on Port:' + PORT);
   })
+
+
+
+
+// INSERT INTO tasks(USERID, TITLE, DESCRIPTION, IMAGEURL, ACTIVE, STARTTIME, PRIZE, ENTRYDATE) VALUES(1, 'some shit', 'some other shit', '', false, '', '', '')
+
+
+
 
