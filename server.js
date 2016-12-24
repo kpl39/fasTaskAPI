@@ -116,10 +116,18 @@ var db = pgp(connectionString);
   })
 
 
-  app.get('/api/posts/:taskid', function(req, res, next) {
+  // app.get('/api/posts/:taskid', function(req, res, next) {
+  //   var taskID = parseInt(req.params.taskid);
+  //   console.log('GET POSTS TASK ID = ', taskID);
+  //   db.any('SELECT * FROM posts WHERE taskid = $1', [taskID])
+  //     .then(respondWithData(res, "posts data"))
+  //     .catch(catchError)
+  // })
+
+   app.get('/api/posts/:taskid', function(req, res, next) {
     var taskID = parseInt(req.params.taskid);
     console.log('GET POSTS TASK ID = ', taskID);
-    db.any('SELECT * FROM posts WHERE taskid = $1', [taskID])
+    db.any('SELECT posts.id, posts.postdate, posts.taskid, posts.userid, posts.username, posts.imageurl, posts.avatarurl, posts.upvotes, count(comments.id) FROM posts INNER JOIN comments ON posts.id = comments.postid WHERE taskid = 1 GROUP BY posts.id;', [taskID])
       .then(respondWithData(res, "posts data"))
       .catch(catchError)
   })
@@ -133,13 +141,17 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
-  app.get('/api/commentcount/:postid', function(req, res, next){
-    var postID = parseInt(req.params.postid);
-    console.log('GET POST DETAIL', postID);
-    db.any('SELECT count(*) FROM comments where postid = $1', [postID])
-      .then(respondWithData(res, 'comments data'))
-      .catch(catchError)
-  })
+
+
+  // app.get('/api/commentcount/:postid', function(req, res, next){
+  //   var postID = parseInt(req.params.postid);
+  //   console.log('GET POST DETAIL', postID);
+  //   db.any('SELECT count(*) FROM comments where postid = $1', [postID])
+  //     .then(respondWithData(res, 'comments data'))
+  //     .catch(catchError)
+  // })
+
+
 
 
   app.get('/api/comments/:postid', function(req, res, next) {
@@ -174,6 +186,9 @@ var db = pgp(connectionString);
       .then(postData(res, 'added task'))
       .catch(catchError)
   })
+
+
+
 
 
 

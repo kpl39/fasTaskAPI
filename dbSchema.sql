@@ -102,10 +102,18 @@ INSERT INTO posts(POSTDATE, TASKID, USERID, USERNAME, IMAGEURL, AVATARURL, UPVOT
 INSERT INTO posts(POSTDATE, TASKID, USERID, USERNAME, IMAGEURL, AVATARURL, UPVOTES)
   VALUES ('2016-12-24T02:07:37.916Z', 1, 3, '2pac', 'https://s3.amazonaws.com/ionic-io-static/ypCHXVXXSTi0QNBAbjQB_handstand.jpg', 'https://s3.amazonaws.com/ionic-io-static/6TdHn7TlQQWU8v920bs2_2pac.jpg', 234);
 
-
+INSERT INTO comments(POSTID, USERID, USERNAME, COMMENT, AVATARURL)
+  VALUES (1, null, null, null, null);
 
 INSERT INTO comments(POSTID, USERID, USERNAME, COMMENT, AVATARURL)
   VALUES (1, 6, '50cent', 'shits funny AF yo', 'https://s3.amazonaws.com/ionic-io-static/CgQe8eVS6KCbTNrqX4Pg_50_cent.jpg');
 
 INSERT INTO comments(POSTID, USERID, USERNAME, COMMENT, AVATARURL)
   VALUES (1, 2, 'snoopdogg', 'lol', 'https://s3.amazonaws.com/ionic-io-static/j9wO6FgsTLW082yfuhxx_snoop_dogg.jpg');
+
+INSERT INTO comments(POSTID, USERID, USERNAME, COMMENT, AVATARURL)
+  VALUES (2, null, null, null, null);
+
+INSERT INTO comments(POSTID, USERID, USERNAME, COMMENT, AVATARURL)
+  VALUES (3, null, null, null, null);
+
