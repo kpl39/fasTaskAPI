@@ -124,6 +124,7 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
+
   app.get('/api/postdetail/:postid', function(req, res, next) {
     var postID = parseInt(req.params.postid);
     console.log('GET POST DETAIL', postID);
@@ -131,6 +132,15 @@ var db = pgp(connectionString);
       .then(respondWithData(res, 'post detail data'))
       .catch(catchError)
   })
+
+  app.get('/api/commentcount/:postid', function(req, res, next){
+    var postID = parseInt(req.params.postid);
+    console.log('GET POST DETAIL', postID);
+    db.any('SELECT count(*) FROM comments where postid = $1', [postID])
+      .then(respondWithData(res, 'comments data'))
+      .catch(catchError)
+  })
+
 
   app.get('/api/comments/:postid', function(req, res, next) {
     var postID = parseInt(req.params.postid);

@@ -34,10 +34,12 @@ CREATE TABLE tasks (
 
 CREATE TABLE posts (
   ID SERIAL PRIMARY KEY,
+  POSTDATE VARCHAR,
   TASKID INT REFERENCES tasks(ID) ON DELETE CASCADE,
   USERID INT REFERENCES users(ID) ON DELETE CASCADE,
   USERNAME VARCHAR,
   IMAGEURL VARCHAR,
+  AVATARURL VARCHAR,
   UPVOTES INT
 );
 
@@ -91,14 +93,14 @@ INSERT INTO tasks (TITLE, DESCRIPTION, IMAGEURL)
 
 
 
-INSERT INTO posts(TASKID, USERID, USERNAME, IMAGEURL, UPVOTES)
-  VALUES (1, 1, 'kylelinhardt', 'https://s3.amazonaws.com/ionic-io-static/oM99xHuQoWY5VeP5wmxX_OneArmSplitHandstand.jpg', 400);
+INSERT INTO posts(POSTDATE, TASKID, USERID, USERNAME, IMAGEURL, AVATARURL, UPVOTES)
+  VALUES ('2016-12-24T02:05:37.916Z', 1, 1, 'kylelinhardt', 'https://s3.amazonaws.com/ionic-io-static/oM99xHuQoWY5VeP5wmxX_OneArmSplitHandstand.jpg', 'http://content.sportslogos.net/logos/7/154/thumbs/377.gif', 400);
 
-INSERT INTO posts(TASKID, USERID, USERNAME, IMAGEURL, UPVOTES)
-  VALUES (1, 2, 'snoopdogg', 'https://s3.amazonaws.com/ionic-io-static/JGMAYmKxTfAoobrZD9Ow_handstand.jpg', 290);
+INSERT INTO posts(POSTDATE, TASKID, USERID, USERNAME, IMAGEURL, AVATARURL, UPVOTES)
+  VALUES ('2016-12-24T02:05:37.916Z', 1, 2, 'snoopdogg', 'https://s3.amazonaws.com/ionic-io-static/JGMAYmKxTfAoobrZD9Ow_handstand.jpg', 'https://s3.amazonaws.com/ionic-io-static/j9wO6FgsTLW082yfuhxx_snoop_dogg.jpg', 290);
 
-INSERT INTO posts(TASKID, USERID, USERNAME, IMAGEURL, UPVOTES)
-  VALUES (1, 3, '2pac', 'https://s3.amazonaws.com/ionic-io-static/ypCHXVXXSTi0QNBAbjQB_handstand.jpg', 234);
+INSERT INTO posts(POSTDATE, TASKID, USERID, USERNAME, IMAGEURL, AVATARURL, UPVOTES)
+  VALUES ('2016-12-24T02:07:37.916Z', 1, 3, '2pac', 'https://s3.amazonaws.com/ionic-io-static/ypCHXVXXSTi0QNBAbjQB_handstand.jpg', 'https://s3.amazonaws.com/ionic-io-static/6TdHn7TlQQWU8v920bs2_2pac.jpg', 234);
 
 
 
