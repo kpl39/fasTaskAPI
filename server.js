@@ -242,7 +242,7 @@ var db = pgp(connectionString);
 
   app.get('/api/getprofile/:id', function(req, res, next) {
     var userid = req.params.id;
-    console.log('email', email);
+    console.log('user id', userid);
     db.one('SELECT * FROM users WHERE userid = $1', [userid])
       .then(respondWithData(res, "profile data"))
       .catch(catchError)
