@@ -224,7 +224,7 @@ var db = pgp(connectionString);
   });
 
   app.get('/api/checkuser/:id', function(req, res, next) {
-    var userId = req.params.id;
+    var userId = req.params.id ;
     console.log(req.params.id);
     db.one('select exists(select 1 from users where userid = $1)', [userId])
       .then(respondWithData(res, "checked"))
@@ -240,10 +240,10 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
-  app.get('/api/getprofile/:email', function(req, res, next) {
-    var email = req.params.email;
+  app.get('/api/getprofile/:id', function(req, res, next) {
+    var userid = req.params.id;
     console.log('email', email);
-    db.one('SELECT * FROM users WHERE email = $1', [email])
+    db.one('SELECT * FROM users WHERE userid = $1', [userid])
       .then(respondWithData(res, "profile data"))
       .catch(catchError)
   })
