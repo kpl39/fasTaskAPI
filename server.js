@@ -224,7 +224,7 @@ var db = pgp(connectionString);
   });
 
   app.get('/api/checkuser/:id', function(req, res, next) {
-    var userId = parseInt(req.params.id);
+    var userId = req.params.id;
     console.log(req.params.id);
     db.one('select exists(select 1 from users where userid = $1)', [userId])
       .then(respondWithData(res, "checked"))
