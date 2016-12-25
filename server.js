@@ -223,6 +223,14 @@ var db = pgp(connectionString);
       .catch(catchError)
   });
 
+  app.get('/api/checkuser/:id', function(req, res, next) {
+    var userId = parseInt(req.params.id);
+    console.log(req.params.id);
+    db.one('select exists(select 1 from users where userid = $1)', [userId])
+      .then(respondWithData(res, "checked"))
+      .catch(catchError)
+  });
+
 
   app.post('/api/adduser', function(req, res, next){
     var userInfo = req.body;
