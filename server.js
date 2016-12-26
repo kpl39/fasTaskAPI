@@ -141,6 +141,12 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
+  app.get('/api/getusers/', function(req, res, next) {
+    db.any('select username from posts')
+      .then(respondWithData(res, 'usernames'))
+      .catch(catchError)
+  })
+
 
 
   // app.get('/api/commentcount/:postid', function(req, res, next){
