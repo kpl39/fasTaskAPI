@@ -241,7 +241,7 @@ var db = pgp(connectionString);
   app.post('/api/adduser', function(req, res, next){
     var userInfo = req.body;
     console.log("Add user request body", req.body)
-    db.none('INSERT INTO users(userid, email, profileurl) values(${userid}, ${email}, ${profileurl})', req.body)
+    db.none('INSERT INTO users(userid, username, email, profileurl) values(${userid}, ${username}, ${email}, ${profileurl})', req.body)
       .then(postData(res, 'posted data'))
       .catch(catchError)
   })
