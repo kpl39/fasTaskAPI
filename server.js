@@ -142,7 +142,7 @@ var db = pgp(connectionString);
   })
 
   app.get('/api/getusers/', function(req, res, next) {
-    db.any('select * from users;')
+    db.any('select username from users;')
       .then(respondWithData(res, 'usernames'))
       .catch(catchError)
   })
