@@ -127,7 +127,7 @@ var db = pgp(connectionString);
    app.get('/api/posts/:taskid', function(req, res, next) {
     var taskID = parseInt(req.params.taskid);
     console.log('GET POSTS TASK ID = ', taskID);
-    db.any('SELECT posts.id, posts.postdate, posts.taskid, posts.userid, posts.username, posts.imageurl, posts.avatarurl, posts.upvotes, count(comments.id) FROM posts INNER JOIN comments ON posts.id = comments.postid WHERE taskid = 1 GROUP BY posts.id;', [taskID])
+    db.any('SELECT posts.id, posts.postdate, posts.taskid, posts.userid, posts.username, posts.imageurl, posts.avatarurl, posts.upvotes, count(comments.id) FROM posts INNER JOIN comments ON posts.id = comments.postid WHERE taskid = $1 GROUP BY posts.id;', [taskID])
       .then(respondWithData(res, "posts data"))
       .catch(catchError)
   })
