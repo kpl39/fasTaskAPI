@@ -260,16 +260,6 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
-
-
-CREATE TABLE affiliations (
-  ID SERIAL PRIMARY KEY,
-  USERID1 INT REFERENCES users(ID) ON DELETE CASCADE,
-  USERID2 INT REFERENCES users(ID) ON DELETE CASCADE,
-  REQUESTSENT BOOLEAN,
-  CONFIRMED BOOLEAN
-);
-
   app.post('/api/uploadpicture', function(req, res, next) {
 
     var img = req.body;
