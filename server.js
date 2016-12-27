@@ -254,6 +254,21 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
+  app.post('/api/friendrequest/', function(req, res, next) {
+    db.none('INSERT INTO affiliations(user1, user2, requestsent, confirmed) values(${user1}, ${user2}, ${true}, ${false}', req.body)
+      .then(postData(res, 'added friend request'))
+      .catch(catchError)
+  })
+
+
+
+CREATE TABLE affiliations (
+  ID SERIAL PRIMARY KEY,
+  USERID1 INT REFERENCES users(ID) ON DELETE CASCADE,
+  USERID2 INT REFERENCES users(ID) ON DELETE CASCADE,
+  REQUESTSENT BOOLEAN,
+  CONFIRMED BOOLEAN
+);
 
   app.post('/api/uploadpicture', function(req, res, next) {
 
