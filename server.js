@@ -254,9 +254,9 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
-  app.post('/api/friendrequest/', function(req, res, next) {
+  app.post('/api/friendrequest', function(req, res, next) {
     console.log('friend request called', req.body);
-    db.none('INSERT INTO affiliations(user1, user2, requestsent, confirmed) values(${user1}, ${user2}, true, false)', req.body)
+    db.none('INSERT INTO affiliations(user1, user2, requestsent, confirmed) values(${user1}, ${user2}, ${requestsent}, ${confirmed})', req.body)
       .then(postData(res, 'added friend request'))
       .catch(catchError)
   })
