@@ -262,7 +262,7 @@ var db = pgp(connectionString);
   })
 
   app.get('/api/getfriendrequests/:userid', function(req, res, next) {
-    var userid = req.params.id;
+    var userid = req.params.userid;
     console.log('user id', userid);
     db.any('SELECT * FROM USERS WHERE USERID IN (SELECT USERID1 from affiliations WHERE REQUESTSENT = true AND CONFIRMED = false AND USERID2 = $1)', [userid])
       .then(respondWithData(res, "friend requests"))
