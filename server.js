@@ -269,6 +269,13 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
+  app.put('/api/acceptrequest', function(req, res, next) {
+    console.log('accept request data', req.body);
+    db.none('UPDATE affiliations SET confirmed = true WHERE userid1 = ${requestor} AND userid2 ${requestee}', req.body)
+      .then(postData(res, 'added friend request'))
+      .catch(catchError)
+  })
+
   app.post('/api/uploadpicture', function(req, res, next) {
 
     var img = req.body;
@@ -345,7 +352,7 @@ var db = pgp(connectionString);
 
 
 
-
+SELECT * FROM AFFILIATIONS WHERE USERID1 = '100684900435655' AND USERID2 = '117489122083613';
 
 
 
