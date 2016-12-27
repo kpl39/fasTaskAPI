@@ -261,6 +261,14 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
+  app.get('/api/getfriendrequests/:userid', function(req, res, next) {
+    var userid = req.params.id;
+    console.log('user id', userid);
+    db.any('SELECT * FROM USERS WHERE USERID IN (SELECT USERID1 from affiliations WHERE REQUESTSENT = true AND CONFIRMED = false AND USERID2 = $1)', [userid])
+      .then(respondWithData(res, "friend requests"))
+      .catch(catchError)
+  })
+
   app.post('/api/uploadpicture', function(req, res, next) {
 
     var img = req.body;
@@ -318,7 +326,32 @@ var db = pgp(connectionString);
 
 
 
-// INSERT INTO tasks(USERID, TITLE, DESCRIPTION, IMAGEURL, ACTIVE, STARTTIME, PRIZE, ENTRYDATE) VALUES(1, 'some shit', 'some other shit', '', false, '', '', '')
+
+
+// SELECT * FROM USERS WHERE USERID IN (SELECT USERID1 from affiliations WHERE CONFIRMED = true AND USERID1 = '100684900435655' OR USERID2 = '100684900435655') UNION SELECT * FROM USERS WHERE USERID IN (SELECT USERID2 from affiliations WHERE CONFIRMED = true AND USERID1 = '100684900435655' OR USERID2 = '100684900435655');
+
+
+
+
+
+// SELECT * FROM AFFILIATIONS WHERE USERID1 = '100684900435655' OR USERID2 = '100684900435655'
+
+
+
+
+
+// SELECT * FROM USERS WHERE USERID IN (SELECT USERID1 from affiliations WHERE USERID1 = '100684900435655' OR USERID2 = '100684900435655') UNION SELECT * FROM USERS WHERE USERID IN (SELECT USERID2 from affiliations WHERE USERID1 = '100684900435655' OR USERID2 = '100684900435655');
+
+
+
+
+
+
+
+
+
+
+
 
 
 
