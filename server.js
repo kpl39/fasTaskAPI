@@ -255,9 +255,9 @@ var db = pgp(connectionString);
   })
 
   app.get('/api/getfastaskfriends/:userid', function(req, res, next) {
-    var userid = req.params.id;
+    var userid = req.params.userid;
     console.log('user id', userid);
-    db.one('SELECT * FROM USERS WHERE USERID IN (SELECT USERID1 from affiliations WHERE CONFIRMED = true AND USERID1 = $1 OR USERID2 = $1) UNION SELECT * FROM USERS WHERE USERID IN (SELECT USERID2 from affiliations WHERE CONFIRMED = true AND USERID1 = $1 OR USERID2 = $1);', [userid])
+    db.one('SELECT * FROM USERS WHERE USERID IN (SELECT USERID1 from affiliations WHERE CONFIRMED = true AND USERID1 = $1 OR USERID2 = $1) UNION SELECT * FROM USERS WHERE USERID IN (SELECT USERID2 from affiliations WHERE CONFIRMED = true AND USERID1 = $1 OR USERID2 = $1)', [userid])
       .then(respondWithData(res, "fastask friends data"))
       .catch(catchError)
   })
