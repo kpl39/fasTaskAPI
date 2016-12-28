@@ -277,6 +277,14 @@ var db = pgp(connectionString);
       .catch(catchError)
   })
 
+  app.get('/api/requeststatus/:userid', function(req, res, next) {
+    var userid = req.params.userid;
+    console.log('user id', userid);
+    db.any('SELECT * FROM affiliations WHERE USERID1 = $1 OR USERID2 = $1', [userid])
+      .then(respondWithData(res, "request status"))
+      .catch(catchError)
+  })
+
   app.put('/api/acceptrequest', function(req, res, next) {
     console.log('accept request data', req.body);
     db.none('UPDATE affiliations SET confirmed = true WHERE userid1 = ${requestor} AND userid2 = ${requestee}', req.body)
