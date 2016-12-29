@@ -297,7 +297,7 @@ var db = pgp(connectionString);
     var img = req.body;
     console.log('image', img.image.changingThisBreaksApplicationSecurity);
 
-    var buf = new Buffer(img.image.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    var buf = new Buffer(img.image.changingThisBreaksApplicationSecurity.replace(/^data:image\/\w+;base64,/, ""),'base64')
     // console.log('upload picture', req.body);
 
     var s3 = new AWS.S3();
