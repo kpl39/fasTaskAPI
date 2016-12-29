@@ -229,6 +229,13 @@ var db = pgp(connectionString);
       .catch(catchError)
   });
 
+  app.put('/api/updateusername', function(req, res, next) {
+    console.log('user pkg', req.body);
+    db.none('UPDATE users SET username = ${username} WHERE userid = ${userid}', req.body)
+      .then(postData(res, 'updated username'))
+      .catch(catchError)
+  })
+
   app.get('/api/checkuser/:id', function(req, res, next) {
     var userId = req.params.id ;
     console.log(req.params.id);
