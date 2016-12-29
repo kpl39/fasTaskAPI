@@ -295,7 +295,7 @@ var db = pgp(connectionString);
   app.post('/api/uploadpicture', function(req, res, next) {
 
     var img = req.body;
-    console.log('image', img.image);
+    // console.log('image', img.image);
 
     var buf = new Buffer(img.image.replace(/^data:image\/\w+;base64,/, ""),'base64')
     // console.log('upload picture', req.body);
@@ -303,7 +303,7 @@ var db = pgp(connectionString);
     var s3 = new AWS.S3();
 
 
-    console.log("img:", img)
+    // console.log("img:", img)
     var bucketName = 'fastask';
     var keyName = img.name;
     var folder = img.folder;
