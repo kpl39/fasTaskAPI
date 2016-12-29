@@ -333,7 +333,7 @@ var db = pgp(connectionString);
 
     var profileUrl = 'https://' + bucketName + '.s3.amazonaws.com/' +  folder + "/" + keyName;
     console.log('email:', email)
-    db.none('UPDATE users SET profileurl = coalesce($1, profileurl) WHERE email=$2', [profileUrl, email])
+    db.none('UPDATE users SET profileurl = coalesce($1, profileurl) WHERE userid=$2', [profileUrl, keyName])
       .then(postData(res, 'updated profile'))
       .catch(catchError)
 
@@ -369,7 +369,14 @@ var db = pgp(connectionString);
 
 
 
-
+  // pendingRequestAlert(friend) {
+  //   let alert = this.alertCtrl.create({
+  //     title: 'Friend Request Pending',
+  //     subTitle: friend.name + 'sent you a friend request. Go check it out.' ,
+  //     buttons: ['OK']
+  //   });
+  //   alert.present();
+  // }
 
 
 
