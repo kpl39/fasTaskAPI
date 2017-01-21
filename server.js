@@ -350,6 +350,57 @@ var db = pgp(connectionString);
 
 
 
+  app.post('/api/uploadtaskimage', function(req, res, next) {
+
+    var img = req.body;
+    // console.log('image', img.image);
+
+    var buf = new Buffer(img.image.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    // console.log('upload picture', req.body);
+
+    var s3 = new AWS.S3();
+
+
+    // console.log("img:", img)
+    var bucketName = 'fastask';
+    var keyName = img.name;
+    var folder = img.folder;
+    var email = img.email;
+    // var bodyName = img.image;
+    // var bodyName = fs.createReadStream('fastask.png');
+
+
+    var params = {Bucket: bucketName,
+                  Key: folder + '/' + keyName,
+                  Body: buf,
+                  ContentEncoding: 'base64',
+                  ContentType: 'image/jpeg',
+                  ACL: 'public-read'};
+
+    s3.putObject(params, function(err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Successfully uploaded data to " + bucketName + "/" + folder + "/" + keyName);
+      };
+    });
+
+    var urlParams = {Bucket: bucketName, Key: keyName};
+    s3.getSignedUrl('getObject', urlParams, function(err, url) {
+      res.status(200).send(url)
+    });
+
+    // var profileUrl = 'https://' + bucketName + '.s3.amazonaws.com/' +  folder + "/" + keyName;
+    // console.log('email:', email)
+    // db.none('UPDATE users SET profileurl = coalesce($1, profileurl) WHERE userid=$2', [profileUrl, keyName])
+    //   .then(postData(res, 'updated profile'))
+    //   .catch(catchError)
+
+
+  })
+
+
+
   server.listen(PORT, function(){
     console.log('Server Listening on Port:' + PORT);
   })
