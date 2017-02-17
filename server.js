@@ -5,9 +5,10 @@ var promise = require('bluebird');
 var AWS = require('aws-sdk');
 var fs = require('fs');
 
+
 var PORT;
 
-// AWS.config.loadFromPath('config.json');
+AWS.config.loadFromPath('config.json');
 
 
 if (process.env.PORT) {
@@ -28,7 +29,7 @@ var options = {
 };
 
 var pgp = require('pg-promise')(options);
-
+console.log("PGP", pgp)
 
 
 if (process.env.DATABASE_URL) {
@@ -39,11 +40,6 @@ if (process.env.DATABASE_URL) {
 
 console.log("database URL", connectionString);
 console.log('port', PORT);
-
-
-
-
-
 
 
 // app.get('/db', function (request, response) {
@@ -61,9 +57,17 @@ console.log('port', PORT);
 // });
 
 
+var dbConnection = {
+  host: process.env.RDS_HOSTNAME,
+  user: process.env.RDS_USERNAME,
+  password: process.env.RDS_PASSWORD,
+  port: process.env.RDS_PORT,
+  database: process.env.RDS_DB_NAME
+}
 
 
-var db = pgp(connectionString);
+
+var db = pgp(dbConnection);
 
 
   var respondWithData = function(res, message) {
@@ -96,6 +100,10 @@ var db = pgp(connectionString);
       return next(err);
     };
   };
+
+  app.get('/api/test', function(req, res, next) {
+    res.status(200).send("it works")
+  })
 
 
 
@@ -351,53 +359,16 @@ var db = pgp(connectionString);
 
 
   app.post('/api/uploadtaskimage', function(req, res, next) {
+    console.log("upload picture called *****")
+    var task = req.body;
 
-    var img = req.body;
-    // console.log('image', img.image);
+    // db.none('INSERT INTO affiliations(userid1, userid2, requestsent, confirmed) values(${user1}, ${user2}, ${requestsent}, ${confirmed})', req.body)
 
-    var buf = new Buffer(img.image.replace(/^data:image\/\w+;base64,/, ""),'base64')
-    // console.log('upload picture', req.body);
+    db.none('INSERT INTO posts(postdate, taskid, userid, username, imageurl, avatarurl) values(${date}, ${taskid}, ${userid}, ${username}, ${imageurl}, ${avatarurl})', task)
+      .then(postData(res, 'task completed'))
+      .catch(catchError(next));
+  });
 
-    var s3 = new AWS.S3();
-
-
-    // console.log("img:", img)
-    var bucketName = 'fastask';
-    var keyName = img.name;
-    var folder = img.folder;
-    var email = img.email;
-    // var bodyName = img.image;
-    // var bodyName = fs.createReadStream('fastask.png');
-
-
-    var params = {Bucket: bucketName,
-                  Key: folder + '/' + keyName,
-                  Body: buf,
-                  ContentEncoding: 'base64',
-                  ContentType: 'image/jpeg',
-                  ACL: 'public-read'};
-
-    s3.putObject(params, function(err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Successfully uploaded data to " + bucketName + "/" + folder + "/" + keyName);
-      };
-    });
-
-    var urlParams = {Bucket: bucketName, Key: keyName};
-    s3.getSignedUrl('getObject', urlParams, function(err, url) {
-      res.status(200).send(url)
-    });
-
-    // var profileUrl = 'https://' + bucketName + '.s3.amazonaws.com/' +  folder + "/" + keyName;
-    // console.log('email:', email)
-    // db.none('UPDATE users SET profileurl = coalesce($1, profileurl) WHERE userid=$2', [profileUrl, keyName])
-    //   .then(postData(res, 'updated profile'))
-    //   .catch(catchError)
-
-
-  })
 
 
 
