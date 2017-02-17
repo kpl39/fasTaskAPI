@@ -8,7 +8,7 @@ var fs = require('fs');
 
 var PORT;
 
-AWS.config.loadFromPath('config.json');
+// AWS.config.loadFromPath('config.json');
 
 
 if (process.env.PORT) {
