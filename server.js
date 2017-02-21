@@ -57,17 +57,17 @@ console.log('port', PORT);
 // });
 
 
-var dbConnection = {
-  host: process.env.RDS_HOSTNAME,
-  user: process.env.RDS_USERNAME,
-  password: process.env.RDS_PASSWORD,
-  port: process.env.RDS_PORT,
-  database: process.env.RDS_DB_NAME
-}
+// var dbConnection = {
+//   host: process.env.RDS_HOSTNAME,
+//   user: process.env.RDS_USERNAME,
+//   password: process.env.RDS_PASSWORD,
+//   port: process.env.RDS_PORT,
+//   database: process.env.RDS_DB_NAME
+// }
 
 
 
-var db = pgp(dbConnection);
+var db = pgp(connectionString);
 
 
   var respondWithData = function(res, message) {
@@ -358,16 +358,26 @@ var db = pgp(dbConnection);
 
 
 
-  app.post('/api/uploadtaskimage', function(req, res, next) {
-    console.log("upload picture called *****")
-    var task = req.body;
+  // app.post('/api/uploadtaskimage', function(req, res, next) {
+  //   console.log("upload picture called *****", req.body);
+  //   var task = req.body;
 
     // db.none('INSERT INTO affiliations(userid1, userid2, requestsent, confirmed) values(${user1}, ${user2}, ${requestsent}, ${confirmed})', req.body)
 
-    db.none('INSERT INTO posts(postdate, taskid, userid, username, imageurl, avatarurl) values(${date}, ${taskid}, ${userid}, ${username}, ${imageurl}, ${avatarurl})', task)
-      .then(postData(res, 'task completed'))
-      .catch(catchError(next));
+    // db.none('INSERT INTO posts(postdate, taskid, userid, username, imageurl, avatarurl) values(${date}, ${taskid}, ${userid}, ${username}, ${imageurl}, ${avatarurl})', task)
+    //   .then(postData(res, 'task completed'))
+    //   .catch(catchError(next));
+  // });
+
+  app.post('/api/completetask', function(req, res, next) {
+    console.log('REQUEST BODY FROM COMPLETE TASK', req.body);
+
+
+    db.none('INSERT INTO posts(postdate, taskid, userid, username, imageurl, avatarurl) values(${date}, ${taskid}, ${userid}, ${username}, ${imageurl}, ${avatarurl})', req.body)
+        .then(postData(res, 'task completed'))
+        .catch(catchError(next));
   });
+
 
 
 
