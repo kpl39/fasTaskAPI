@@ -40,6 +40,8 @@ app.use(express.static(__dirname));
 //     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
 // });
 
+console.log("NEW EB DEPLOYMENT WORKS!");
+
 app.use(cors())
 
 var options = {
@@ -955,6 +957,24 @@ console.log(db);
       .then(respondWithData(res, 'email vendor or user'))
       .catch(catchError(next));
   })
+
+
+  app.get('/api/getfavoritetasks/:userid', function(req, res, next) {
+    var userid = req.params.userid
+
+    db.any('SELECT ft.id, ft.global, ft.owner_id, ft.title, ft.description, uf.id as fav_id from favorite_task as ft LEFT JOIN user_favorite as uf ON ft.id = uf.favorite_id WHERE ft.owner_id = $1 OR ft.global = true OR uf.user_id = $1;', [userid])
+      .then(respondWithData(res, 'favorite tasks'))
+      .catch(catchError(next));
+  })
+
+  app.post('/api/addfavoritetask', function(req, res, next) {
+    var pkg = req.body; 
+
+    db.one('INSERT INTO favorite_task (global, owner_id, title, description) VALUES(${global}, ${user_id}, ${title}, ${description}) RETURNING id', pkg)
+      .then(respondWithData(res, 'added favorite task'))
+      .catch(catchError(next));
+  })
+
 
   app.get('/api/twitterfriends/:twitterid', function(req, res, next) {
       var twitterid = req.params.twitterid;
