@@ -630,7 +630,7 @@ console.log(db);
 
    app.post('/api/submithunt', function(req, res, next) {
  
-      db.one('INSERT INTO hunts(title, description, date_tm, team, duration, active, ended) VALUES(${title}, ${description}, ${date_tm}, ${team}, ${duration}, ${active}, ${ended}) returning *', req.body)
+      db.one('INSERT INTO hunts(title, description, date_tm, team, duration, active, ended, prize) VALUES(${title}, ${description}, ${date_tm}, ${team}, ${duration}, ${active}, ${ended}, ${prize}) returning *', req.body)
         .then(respondWithData(res, 'added hunt'))
         .catch(catchError(next));
   });
@@ -1018,7 +1018,13 @@ console.log(db);
     })
 
 
+  app.post('/api/addtaskview', function(req, res, next) {
+    let pkg = req.body;
 
+    db.one('INSERT INTO task_views (taskid, userid, date_tm) VALUES(${taskid}, ${userid}, ${date_tm}) RETURNING id', pkg)
+      .then(respondWithData(res, 'task view'))
+      .catch(catchError(next));
+  })
 
   
 
