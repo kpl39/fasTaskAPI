@@ -1026,6 +1026,13 @@ console.log(db);
       .catch(catchError(next));
   })
 
+  app.post('/api/addtaskattempt', function(req, res, next) {
+    let pkg = req.body;
+
+    db.one('INSERT INTO task_attempts (taskid, userid, date_tm) VALUES(${taskid}, ${userid}, ${date_tm}) RETURNING id', pkg)
+      .then(respondWithData(res, 'task view'))
+      .catch(catchError(next));
+  })
   
 
 
