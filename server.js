@@ -905,10 +905,10 @@ console.log(db);
     })
 
 
-  app.get('/api/getvendorinfo/:vendorid', function(req, res, next) {
-    var vendor_id = req.params.vendorid; 
+  app.get('/api/getvendorinfo/:userid', function(req, res, next) {
+    var userid = req.params.userid; 
 
-    db.any('SELECT * FROM vendors WHERE id = $1', [vendor_id])
+    db.one('SELECT * FROM vendors WHERE userid = $1', [userid])
       .then(respondWithData(res, 'Vendor Info'))
       .catch(catchError(next));
 
@@ -919,7 +919,7 @@ console.log(db);
 
     //INSERT INTO hunts(title, description, date_tm, team, duration, active, ended) VALUES(${title}, ${description}, ${date_tm}, ${team}, ${duration}, ${active}, ${ended}) returning *', req.body)
 
-    db.one('INSERT INTO vendors(vendor_nm, city, state, zip, phone, email, website, first_name, last_name) VALUES(${businessName}, ${city}, ${state},  ${zip}, ${phone}, ${email}, ${businessWebsite}, ${firstName}, ${lastName}) RETURNING id', pkg)
+    db.one('INSERT INTO vendors(vendor_nm, city, state, zip, phone, email, website, first_name, last_name, userid) VALUES(${businessName}, ${city}, ${state},  ${zip}, ${phone}, ${email}, ${businessWebsite}, ${firstName}, ${lastName}, ${userid}) RETURNING id', pkg)
       .then(respondWithData(res, 'Vendor ID'))
       .catch(catchError(next));
   })
@@ -1033,9 +1033,48 @@ console.log(db);
       .then(respondWithData(res, 'task view'))
       .catch(catchError(next));
   })
+
+  app.get('/api/gettaskattempts/:query', function(req, res, next) {
+    let query = req.params.query;
+    db.any(query)
+      .then(respondWithData(res, 'task view'))
+      .catch(catchError(next));
+  })
+
+  app.post('/api/gettaskattempts', function(req, res, next) {
+    let pkg = req.body;
+    db.any({
+      name: 'get task attempts',
+      text: pkg.query, 
+      values: pkg.values
+    })
+      .then(respondWithData(res, 'get task attempts'))
+      .catch(catchError(next));
+  })
   
+  app.post('/api/geofencetransition', function(req, res, next) {
+    let pkg = req.body;
 
+    db.none('INSERT INTO geologs (log) VALUES(${log})', pkg)
+      .then(postData(res, 'added geolog'))
+      .catch(catchError)
+  })
 
+  app.put('api/updatecompanyprofile', function(req, res, next) {
+    let pkg = req.body;
+    //UPDATE hunt_task_complete SET (completed, image_url, date_tm) = (true, ${image_url}, ${date_tm}) WHERE task_id = ${task_id}
+    db.none('UPDATE vendors SET(address, city, zip, country, phone, website) = (${address}, ${city}, ${zip}, ${country}, ${phone}, ${website}) WHERE id = ${vendorid}', pkg)
+      .then(postData(res, 'added geolog'))
+      .catch(catchError)
+  })
+
+  app.get('api/gettasksbyvendor/:vendorid', function(req, res, next) {
+    let vendorid = req.params.vendorid;
+    console.log("GET TASKS BY VENDOR", vendorid);
+    db.any('SELECT * FROM tasks where vendorid = $1', [vendorid])
+      .then(respondWithData(res, 'tasks for vendorid: ', vendorid))
+      .catch(catchError)
+  })
 
 
 
