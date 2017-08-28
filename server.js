@@ -1041,14 +1041,15 @@ console.log(db);
       .catch(catchError(next));
   })
 
-  app.post('/api/gettaskattempts', function(req, res, next) {
+  app.post('/api/taskquery', function(req, res, next) {
     let pkg = req.body;
+    console.log("TASK QUERY", pkg);
     db.any({
-      name: 'get task attempts',
+      name: pkg.name,
       text: pkg.query, 
       values: pkg.values
     })
-      .then(respondWithData(res, 'get task attempts'))
+      .then(respondWithData(res, pkg.name))
       .catch(catchError(next));
   })
   
@@ -1060,7 +1061,7 @@ console.log(db);
       .catch(catchError)
   })
 
-  app.put('api/updatecompanyprofile', function(req, res, next) {
+  app.put('/api/updatecompanyprofile', function(req, res, next) {
     let pkg = req.body;
     //UPDATE hunt_task_complete SET (completed, image_url, date_tm) = (true, ${image_url}, ${date_tm}) WHERE task_id = ${task_id}
     db.none('UPDATE vendors SET(address, city, zip, country, phone, website) = (${address}, ${city}, ${zip}, ${country}, ${phone}, ${website}) WHERE id = ${vendorid}', pkg)
@@ -1068,13 +1069,14 @@ console.log(db);
       .catch(catchError)
   })
 
-  app.get('api/gettasksbyvendor/:vendorid', function(req, res, next) {
+  app.get('/api/gettasksbyvendor/:vendorid', function(req, res, next) {
     let vendorid = req.params.vendorid;
     console.log("GET TASKS BY VENDOR", vendorid);
     db.any('SELECT * FROM tasks where vendorid = $1', [vendorid])
       .then(respondWithData(res, 'tasks for vendorid: ', vendorid))
       .catch(catchError)
   })
+
 
 
 
