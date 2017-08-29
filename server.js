@@ -32,6 +32,9 @@ app.use(express.static(__dirname));
 
 app.use(cors())
 
+
+console.log("NEW ORGANIZED API")
+
 // ********** AUTHORIZATION ***************** // 
 app.post('/api/captcha', db.captcha); 
 

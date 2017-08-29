@@ -3,7 +3,7 @@ var helpers = require('./queryHelpers');
 var respondWithData = helpers.respondWithData;
 var catchError = helpers.catchError;
 var postData = helpers.postData;
-
+var AWS = require('aws-sdk');
 
  function uploadPicture(req, res, next) {
     var img = req.body;
