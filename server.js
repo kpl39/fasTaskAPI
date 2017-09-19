@@ -1,5 +1,8 @@
 var express = require('express');
-var http = require('http');
+// var app = require('express')();
+var app = express();
+// var http = require('http');
+var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var promise = require('bluebird');
 var AWS = require('aws-sdk');
@@ -9,6 +12,7 @@ var request = require('request');
 var OAuth   = require('oauth-1.0a');
 var crypto  = require('crypto');
 var db = require('./queries/exports');
+
 var PORT;
 
 
@@ -23,17 +27,32 @@ var corsOptions = {
   origin: 'https://s3.amazonaws.com/'
 }
 
-
-var app = express();
-var server = http.createServer(app);
+console.log("after changes")
+// var app = express();
+// var server = http.createServer(app);
 
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(express.static(__dirname));
 
 app.use(cors())
 
+var io = require('socket.io')(http);
+// io.set("origins = *");
+// console.log('IO', io); 
 
-console.log("NEW ORGANIZED API")
+io.on('connection', (socket) => {
+
+  console.log('User Connected');
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  })
+
+  socket.on('add-message', (message) => {
+    io.emit('message', {type: 'new-message', text: message});
+  });
+
+});
 
 // ********** AUTHORIZATION ***************** // 
 app.post('/api/captcha', db.captcha); 
@@ -59,7 +78,8 @@ app.post('/api/uploadpicture', db.uploadPicture);
 app.post('/api/uploadtaskimage', db.uploadTaskImage);
 app.post('/api/uploadprofileimage', db.uploadProfileImage);
 app.put('/api/updateprofilepic', db.uploadProfilePic);
-
+app.post('/api/cropthumbnail', db.getImageInfo);
+app.get('/api/detectimage/:name', db.detectImage)
 
 // ********** LIKES ***************** // 
 app.post('/api/addlike', db.addLike);
@@ -149,7 +169,11 @@ app.get('/api/getmodelid/:uid', db.getModelId);
 app.post('/api/addpromotion', db.addPromotion);
 
 
-server.listen(PORT, function(){
+// server.listen(PORT, function(){
+//     console.log('Server Listening on Port:' + PORT);
+// })
+
+http.listen(PORT, function(){
     console.log('Server Listening on Port:' + PORT);
 })
 

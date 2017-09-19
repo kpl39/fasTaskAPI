@@ -4,6 +4,8 @@ var respondWithData = helpers.respondWithData;
 var catchError = helpers.catchError;
 var postData = helpers.postData;
 var AWS = require('aws-sdk');
+var easyimg = require('easyimage');
+// var rekognition = new AWS.Rekognition({accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, apiVersion: '2016-06-27'});
 
  function uploadPicture(req, res, next) {
     var img = req.body;
@@ -42,7 +44,7 @@ var AWS = require('aws-sdk');
 
 
  function uploadTaskImage(req, res, next) {
-
+    let that = this;
     var img = req.body;
     var buf = new Buffer(img.image.replace(/^data:image\/\w+;base64,/, ""),'base64')
     var s3 = new AWS.S3({accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY});
@@ -59,15 +61,71 @@ var AWS = require('aws-sdk');
                   ContentType: 'image/jpeg',
                   ACL: 'public-read'};
 
-    s3.putObject(params, function(err, data) {
+    // s3.putObject(params, function(err, data) {
+    s3.putObject(params, (err, data) => {
       if (err) {
-        console.log(err);
+          console.log(err);
       } else {
-        console.log("Successfully uploaded data to ", imageurl);
-        res.status(200).send({data: imageurl});
+          console.log("Successfully uploaded data to ", imageurl);
+          cropImage(imageurl);
+          res.status(200).send({data: imageurl});
       };
     });
  };
+
+ function getImageInfo(req, res, next) {
+  let url = req.body.url;
+  console.log("CALLED CROP IMAGE", url);
+  easyimg.info(url)
+    .then((image) => {
+      console.log("IMAGE INFO", image);
+
+      // cropImage(image)
+      //   .then((croppedimmage) => {
+          res.status(200).send({data: image});
+        // })
+      
+      // easyimg.rescrop({})
+      // easyimg.
+    }, (err) => {
+      console.log("ERROR", err);
+    })
+ }
+
+ function cropImage(image) {
+    return new Promise(resolve => {
+      let thumbsize = 300;
+      let height, width;
+
+      if (image.width <= image.height) {
+        width = thumbsize;
+        height = (thumbsize / image.width) * image.height; 
+      } else {
+        height = thumbsize;
+        width = (image.height / thumbsize) * image.width;
+      }
+
+
+      let tempname = image.name + image.type;
+      let options = {
+        src: image.path,
+        dst: '../images/' + tempname,
+        width: width,
+        height: height,
+        cropwidth: 300,
+        cropheight: 300
+      };
+
+      easyimg.rescrop(options)
+        .then((image) => {
+          console.log("IMAGE AFTER CROP", image);
+          resolve(image);
+        }, (err) => {
+          console.log("ERROR WITH CROP", err);
+          resolve(err);
+        })
+    })
+ }
 
 
  function uploadProfileImage(req, res, next) {
@@ -112,11 +170,34 @@ var AWS = require('aws-sdk');
  };
 
 
+ function detectImage(req, res, next) {
+  var rekognition = new AWS.Rekognition({accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, apiVersion: '2016-06-27', region: 'us-east-1'});
+  let name = req.params.name;
+
+  var params = {
+    Image: {
+     S3Object: {
+      Bucket: "kpl-test-bucket", 
+      Name: name
+     }
+    }
+   };
+
+  rekognition.detectFaces(params, function(err, data) {
+   if (err) console.log(err, err.stack); // an error occurred
+   else     res.status(200).send({data: data});  
+   })        // successful response
+
+ }
+
+
 module.exports = {
 	uploadPicture: uploadPicture,
 	uploadTaskImage: uploadTaskImage,
 	uploadProfileImage: uploadProfileImage,
-	uploadProfilePic: uploadProfilePic
+	uploadProfilePic: uploadProfilePic,
+  getImageInfo: getImageInfo,
+  detectImage: detectImage
 };
 
 
